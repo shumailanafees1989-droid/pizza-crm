@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pizza Shop CRM — Orders, Customers, Menu, Team & Inventory</title>
+  <meta name="description" content="A modern CRM for pizza shops: manage orders, customers, menu, staff, inventory and sales reports in one responsive dashboard.">
+  <meta name="theme-color" content="#e5432d">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍕</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    // apply saved theme before paint to avoid a flash
+    try { var t = localStorage.getItem('pizzacrm:theme'); if (!t && matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark'; if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <div id="splash" class="splash" aria-live="polite"><div class="splash-pizza">🍕</div><p>Warming up the oven…</p></div>
+  <div id="root"></div>
+  <noscript>This app needs JavaScript enabled.</noscript>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
