@@ -70,6 +70,7 @@ export default {
         case 'page': filters.page = +btn.dataset.p; list(); break;
         case 'advance': await advanceOrder(order); break;
         case 'pay': await markPaid(order); break;
+        case 'invoice': (await import('./invoices.js')).openInvoiceModal(order); break;
         case 'delete': await deleteOrder(order); break;
         case 'clear':
           Object.assign(filters, { q: '', status: '', payment: '', type: '', range: 'all', page: 1 });
@@ -130,6 +131,7 @@ function renderList(root) {
           <td class="actions" data-label="">
             ${next ? `<button class="btn soft sm" data-act="advance" data-id="${o.id}" title="Move to ${statusLabel(next, o.order_type)}">${icon('arrow', 14)} ${esc(statusLabel(next, o.order_type))}</button>` : ''}
             ${o.payment_status === 'pending' && o.delivery_status !== 'cancelled' ? `<button class="btn soft sm green" data-act="pay" data-id="${o.id}">${icon('dollar', 14)} Mark paid</button>` : ''}
+            ${iconBtn('invoice', 'receipt', 'Generate / View Invoice', o.id)}
             ${iconBtn('edit', 'edit', 'Edit order', o.id)}${iconBtn('delete', 'trash', 'Delete order', o.id, 'danger')}
           </td></tr>`;
       }).join('')}</tbody></table></div>
@@ -186,9 +188,9 @@ export function openOrderDetail(id) {
         <div><span>Delivery fee</span><span>${fmtMoney(o.delivery_fee)}</span></div>
         <div class="grand"><span>Total</span><span>${fmtMoney(o.total)}</span></div>
       </div>`,
-    footer: `
       <button class="btn ghost danger-text" data-do="delete">${icon('trash', 16)} Delete</button>
       <span class="grow"></span>
+      <button class="btn soft" data-do="invoice">${icon('receipt', 16)} Invoice</button>
       <button class="btn ghost" data-do="edit">${icon('edit', 16)} Edit</button>
       ${o.payment_status === 'pending' && o.delivery_status !== 'cancelled' ? `<button class="btn soft green" data-do="pay">${icon('dollar', 16)} Mark paid</button>` : ''}
       ${next ? `<button class="btn primary" data-do="advance">${icon('arrow', 16)} ${esc(statusLabel(next, o.order_type))}</button>` : ''}
@@ -197,7 +199,8 @@ export function openOrderDetail(id) {
       const b = e.target.closest('[data-do]');
       if (!b) return;
       const a = b.dataset.do;
-      if (a === 'edit') { api.close(); openOrderForm(o); }
+      if (a === 'invoice') { (await import('./invoices.js')).openInvoiceModal(o); }
+      else if (a === 'edit') { api.close(); openOrderForm(o); }
       else if (a === 'delete') { api.close(); deleteOrder(o); }
       else if (a === 'advance' || a === 'pay' || a === 'cancel') {
         let ok;

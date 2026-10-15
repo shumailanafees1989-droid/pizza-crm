@@ -9,11 +9,13 @@ import menu from './views/menu.js';
 import team from './views/team.js';
 import inventory from './views/inventory.js';
 import reports from './views/reports.js';
+import invoices from './views/invoices.js';
 import settings from './views/settings.js';
 
 const ROUTES = {
   dashboard: { view: dashboard, icon: 'dashboard', label: 'Dashboard' },
   orders: { view: orders, icon: 'bag', label: 'Orders', badge: () => store.data.orders.filter(isActive).length },
+  invoices: { view: invoices, icon: 'receipt', label: 'Invoices' },
   customers: { view: customers, icon: 'users', label: 'Customers' },
   menu: { view: menu, icon: 'pizza', label: 'Menu' },
   team: { view: team, icon: 'badge', label: 'Team' },
