@@ -125,7 +125,10 @@ function renderLogin() {
         <div class="field"><label for="l_pw">Password</label><input class="input" id="l_pw" type="password" required autocomplete="current-password" placeholder="••••••••"></div>
         <p class="form-error" id="loginErr" hidden></p>
         <button class="btn primary block" type="submit">Sign in</button>
-        <p class="hint center">Accounts are created by the owner in Supabase → Authentication.</p>
+        <div style="margin-top:14px; text-align:center;">
+          <button type="button" class="btn ghost block" id="demoModeBtn" style="font-size:0.9rem;">⚡ Explore in Demo Mode (No Login Required)</button>
+        </div>
+        <p class="hint center" style="margin-top:10px;">Accounts are created by the owner in Supabase → Authentication.</p>
       </form>
     </div>`;
   $('#loginForm').addEventListener('submit', async (e) => {
@@ -134,6 +137,10 @@ function renderLogin() {
     btn.disabled = true; btn.classList.add('loading'); err.hidden = true;
     try { await signIn($('#l_email').value.trim(), $('#l_pw').value); await start(); }
     catch (ex) { err.textContent = ex.message || 'Sign in failed'; err.hidden = false; btn.disabled = false; btn.classList.remove('loading'); }
+  });
+  $('#demoModeBtn')?.addEventListener('click', async () => {
+    store.mode = 'local';
+    await start();
   });
 }
 
@@ -165,7 +172,27 @@ async function start() {
 }
 
 (async function boot() {
-  await init();
-  if (store.mode === 'supabase' && !store.session) return renderLogin();
-  await start();
+  const safetyTimer = setTimeout(() => {
+    const splash = $('#splash');
+    if (splash) {
+      console.warn('Boot timeout reached, removing splash and falling back to demo mode');
+      splash.remove();
+      store.mode = 'local';
+      start();
+    }
+  }, 3500);
+
+  try {
+    await init();
+    clearTimeout(safetyTimer);
+    if (store.mode === 'supabase' && !store.session) return renderLogin();
+    await start();
+  } catch (err) {
+    clearTimeout(safetyTimer);
+    console.error('Boot error:', err);
+    $('#splash')?.remove();
+    store.mode = 'local';
+    await start();
+  }
 })();
+

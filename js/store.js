@@ -37,14 +37,24 @@ export async function init() {
   const { url, key } = getCredentials();
   if (url && key) {
     try {
-      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-      store.client = createClient(url, key);
+      const initPromise = (async () => {
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+        const client = createClient(url, key);
+        const { data } = await client.auth.getSession();
+        return { client, session: data?.session };
+      })();
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+      );
+
+      const res = await Promise.race([initPromise, timeoutPromise]);
+      store.client = res.client;
+      store.session = res.session;
       store.mode = 'supabase';
-      const { data } = await store.client.auth.getSession();
-      store.session = data.session;
       store.client.auth.onAuthStateChange((_e, s) => { store.session = s; });
     } catch (e) {
-      console.error('Supabase init failed', e);
+      console.warn('Supabase init failed or timed out, using local mode:', e.message || e);
       store.mode = 'local';
       store.connectError = e.message || String(e);
     }
