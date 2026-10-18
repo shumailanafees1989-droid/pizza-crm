@@ -188,6 +188,7 @@ export function openOrderDetail(id) {
         <div><span>Delivery fee</span><span>${fmtMoney(o.delivery_fee)}</span></div>
         <div class="grand"><span>Total</span><span>${fmtMoney(o.total)}</span></div>
       </div>`,
+    footer: `
       <button class="btn ghost danger-text" data-do="delete">${icon('trash', 16)} Delete</button>
       <span class="grow"></span>
       <button class="btn soft" data-do="invoice">${icon('receipt', 16)} Invoice</button>
