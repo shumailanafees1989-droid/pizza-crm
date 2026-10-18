@@ -4,7 +4,7 @@ import { buildSeed } from './seed.js';
 import { uid } from './util.js';
 
 export const TABLES = ['customers', 'menu_items', 'orders', 'staff', 'tasks', 'inventory'];
-const LS = 'pizzacrm:v1:';
+const LS = 'pizzacrm:v3:';
 const SB_KEY = 'pizzacrm:supabase';
 
 export const store = {
